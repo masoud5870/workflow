@@ -1,1 +1,38 @@
+name: WordPress WPScan Automation
 
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  wpscan-task:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        [cite_start]uses: actions/checkout@v4 [cite: 93]
+
+      - name: Set up Docker Compose
+        run: |
+          docker-compose -f docker/docker-compose.yml up -d [cite: 9, 60]
+      
+      - name: Wait for WordPress to be ready
+        run: |
+          sleep 30 # زمان کافی برای بالا آمدن سرویس [cite: 119-125]
+
+      - name: Run WPScan
+        run: |
+          docker run --rm wpscanteam/wpscan \
+          --url http://localhost:8080 \
+          --api-token ${{ secrets.WPSCAN_API_TOKEN }} \
+          --enumerate u,vp,vt --force \
+          --format cli > scans/initial_scan.txt [cite: 15, 135]
+          # توجه: توکن را باید در Settings > Secrets گیت‌هاب ذخیره کنی.
+
+      - name: Upload Scan Results
+        uses: actions/upload-artifact@v4
+        with:
+          name: wpscan-report
+          [cite_start]path: scans/initial_scan.txt [cite: 23]
