@@ -1,0 +1,27 @@
+name: WordPress Security Scan
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  wordpress-wpscan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Environment
+        run: |
+          cd docker
+          docker-compose up -d
+
+      - name: Wait for WordPress to be ready
+        run: |
+          echo "Waiting for WordPress to start..."
+          sleep 45 
+
+      - name: Run WPScan
+        run: |
+          # اجرای اسکن با استفاده از توکن امنیتی برای شناسایی CVEها
+          docker run --rm wpscanteam/wpscan --url http://host.docker.internal:8080 --enumerate u,vp,vt --force --api-token ${{ secrets.WPSCAN_API_TOKEN }}
