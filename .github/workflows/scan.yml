@@ -2,7 +2,7 @@ name: WordPress Security Scan
 
 on:
   push:
-    branches: [ main ]  # هر بار روی برنچ اصلی پوش کنید، اسکن اجرا می‌شود
+    branches: [ main ]
 
 jobs:
   wordpress-wpscan:
@@ -19,8 +19,9 @@ jobs:
       - name: Wait for WordPress to be ready
         run: |
           echo "Waiting for WordPress to start..."
-          sleep 30  # زمان کافی برای بالا آمدن کامل پایگاه‌داده و وردپرس
+          sleep 45 
 
       - name: Run WPScan
         run: |
-          docker run --rm wpscanteam/wpscan --url http://localhost:8080 --enumerate u,vp,vt --force --api-token ${{ secrets.WPSCAN_API_TOKEN }}
+          # اجرای اسکن با استفاده از توکن امنیتی برای شناسایی CVEها
+          docker run --rm wpscanteam/wpscan --url http://host.docker.internal:8080 --enumerate u,vp,vt --force --api-token ${{ secrets.WPSCAN_API_TOKEN }}
