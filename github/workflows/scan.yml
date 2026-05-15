@@ -14,14 +14,15 @@ jobs:
       - name: Set up Docker Environment
         run: |
           cd docker
-          docker-compose up -d
+          # استفاده از هر دو حالت داکر کامپوز برای جلوگیری از خطای 127
+          docker compose up -d || docker-compose up -d
 
       - name: Wait for WordPress to be ready
         run: |
-          echo "Waiting for WordPress to start..."
-          sleep 60 
+          echo "Waiting for services to start..."
+          sleep 60
 
       - name: Run WPScan
         run: |
-          # اجرای اسکن با استفاده از توکن امنیتی برای شناسایی CVEها
+          # اجرای اسکن
           docker run --rm wpscanteam/wpscan --url http://host.docker.internal:8080 --enumerate u,vp,vt --force --api-token ${{ secrets.WPSCAN_API_TOKEN }}
