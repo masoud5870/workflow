@@ -19,9 +19,9 @@ jobs:
       - name: Wait for WordPress to be ready
         run: |
           echo "Waiting for WordPress to start..."
-          sleep 45 
+          sleep 60 
 
       - name: Run WPScan
         run: |
-          # اجرای اسکن با استفاده از توکن امنیتی برای شناسایی CVEها
+          # اسکن مخزن با استفاده از API Token ست شده در GitHub Secrets
           docker run --rm wpscanteam/wpscan --url http://host.docker.internal:8080 --enumerate u,vp,vt --force --api-token ${{ secrets.WPSCAN_API_TOKEN }}
