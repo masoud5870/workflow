@@ -1,7 +1,9 @@
 FROM wordpress:latest
 
-# Hardening: حذف فایل‌های پیش‌فرض برای کاهش سطح حمله
+# حذف فایل‌های غیرضروری برای کاهش سطح حمله
 RUN rm /var/www/html/readme.html /var/www/html/license.txt
 
-# تغییر کاربر به غیر ریشه (Non-root user) طبق اهداف پروژه
+# تنظیم اجرای کانتینر با کاربر غیر ریشه (Non-root user)
 USER www-data
+
+EXPOSE 80
