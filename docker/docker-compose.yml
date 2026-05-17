@@ -12,7 +12,7 @@ services:
       MYSQL_PASSWORD: wppass
 
   wordpress:
-    build:.
+    build: .
     container_name: wp-site
     depends_on:
       - db
