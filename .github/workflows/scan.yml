@@ -14,11 +14,8 @@ jobs:
       - name: Set up Docker Environment
         run: |
           cd docker
-          
-          # ساخت خودکار و داینامیک فایل کامپوز برای حذف خطاهای فاصله‌گذاری
           cat << 'EOF' > docker-compose.yml
           version: '3.8'
-
           services:
             db:
               image: mysql:5.7
@@ -29,9 +26,8 @@ jobs:
                 MYSQL_DATABASE: wordpress
                 MYSQL_USER: wpuser
                 MYSQL_PASSWORD: wppass
-
             wordpress:
-              build: .
+              build:.
               container_name: wp-site
               depends_on:
                 - db
@@ -43,12 +39,12 @@ jobs:
                 WORDPRESS_DB_PASSWORD: wppass
                 WORDPRESS_DB_NAME: wordpress
           EOF
-
-          # اجرای داکر
           docker compose up -d
 
       - name: Wait for WordPress to be ready
         run: sleep 60
 
       - name: Run WPScan
-        run: docker run --rm wpscanteam/wpscan --url http://host.docker.internal:8080 --enumerate u,vp,vt --force --api-token ${{ secrets.WPSCAN_API_TOKEN }}
+        run: |
+          # استفاده از --network host و localhost برای حل مشکل شبکه در محیط لینوکس
+          docker run --network host --rm wpscanteam/wpscan --url http://localhost:8080 --enumerate u,vp,vt --force --api-token ${{ secrets.WPSCAN_API_TOKEN }}
